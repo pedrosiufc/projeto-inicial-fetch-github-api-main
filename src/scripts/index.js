@@ -16,6 +16,11 @@ async function user(userName){
     return await response.json();
 }
 
+async function repos(userName){
+    const response = await fetch(`https://api.github.com/users/${userName}/repos`)
+    return await response.json();
+}
+
 // function getUserProfile() {
 //     user().then(data => {
 //         const profile = document.querySelector('.profile-data');
@@ -32,7 +37,8 @@ async function user(userName){
 // }
 
 
-function getUserProfile(userName){
+function getUserProfile(userName){  
+          
     user(userName).then(userData => {
         let userInfo = `<img src="${userData.avatar_url}" alt="Foto do perfil do usuário"/>
             <div class="data">
@@ -41,6 +47,25 @@ function getUserProfile(userName){
             </div>`
 
             document.querySelector('.profile-data').innerHTML = userInfo;
+         
+            getUserRepositories(userName);
     })
  }
-    
+
+
+function getUserRepositories(userName) {
+ repos(userName).then(reposData => {
+        let repositoriesItens = "";
+        reposData.forEach(repo => {
+            
+            repositoriesItens += `<li> <a href="${repo.html_url}" target="_blank"> ${repo.name}</a></li>`;
+        })
+        document.querySelector('.profile-data').innerHTML += 
+                                                            `<div class="repositories section">
+                                                                 <h2>Repositórios</h2>
+                                                                 <ul>${repositoriesItens}</ul>
+                                                            </div>`;
+   })
+}
+
+
